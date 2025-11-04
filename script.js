@@ -13,11 +13,9 @@ let notes = [],
   lastQuery = "";
 let autocompleteTimer = null;
 
-// ---------------- Storage helpers ----------------
 const saveStore = () => localStorage.setItem("notes", JSON.stringify(notes));
 const loadStore = () => JSON.parse(localStorage.getItem("notes") || "[]");
 
-// ---------------- Note functions ----------------
 const updateCount = () => {
   const txt = input.value.trim();
   wordCount.innerHTML = `${txt ? txt.split(/\s+/).length : 0} words`;
@@ -33,7 +31,11 @@ const renderList = (filter = "") => {
     .forEach((n) => {
       const d = document.createElement("div");
       d.className = "note-item" + (n.id === activeId ? " active" : "");
-      d.textContent = n.title || "(untitled)";
+      d.innerHTML =
+        (n.title || "(untitled)") +
+        "<br>" +
+        (n.updated ? new Date(n.updated).toLocaleString() : "");
+
       d.onclick = () => open(n.id);
       notesList.appendChild(d);
     });
@@ -66,21 +68,17 @@ const newNote = () => {
 const saveNote = () => {
   if (!activeId) return newNote();
 
-  // Find the note
   const n = notes.find((x) => x.id === activeId);
-  if (!n) return; // Note not found, shouldn't happen
+  if (!n) return;
 
-  // Update its properties in place
   n.title = title.value;
   n.content = input.value;
   n.updated = Date.now();
 
-  // Sort the notes array to move this one to the top
   notes.sort((a, b) => b.updated - a.updated);
 
   saveStore();
-  // We only need to re-render the list if the title changed
-  // This is a small optimization
+
   renderList(search.value);
 };
 
@@ -122,7 +120,6 @@ function LCS(a, b) {
   return dp[m][n];
 }
 
-// ----------------- Suggestion Logic -----------------
 const getSuggestions = (prefix) => {
   if (!prefix) return [];
   const [s, e] = [
@@ -131,7 +128,7 @@ const getSuggestions = (prefix) => {
   ];
   const slice = words.slice(s, e);
   if (slice.length) return slice.slice(0, 10);
-  // if no direct prefix match, find best by LCS similarity
+
   return words
     .map((w) => ({
       w,
@@ -175,7 +172,7 @@ const replaceWord = (w) => {
   saveNote();
   updateCount();
   suggestBox.style.display = "none";
-  input.focus(); // <-- Add this line
+  input.focus();
 };
 
 const handleAuto = () => {
@@ -190,7 +187,6 @@ const handleAuto = () => {
   showSuggestions(getSuggestions(token));
 };
 
-// ---------------- Events ----------------
 input.addEventListener("input", () => {
   clearTimeout(autosave);
   clearTimeout(autocompleteTimer);
@@ -211,7 +207,6 @@ el("newBtn").onclick = newNote;
 el("saveBtn").onclick = saveNote;
 el("deleteBtn").onclick = deleteNote;
 
-// ---------------- Initialization ----------------
 (async () => {
   notes = loadStore();
   if (!notes.length) {
