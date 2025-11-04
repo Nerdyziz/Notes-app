@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SmartNotes — LCS + Binary Search</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand">SmartNotes</div>
+      <div class="controls">
+        <button id="newBtn">New</button>
+        <button id="saveBtn">Save</button>
+        <button id="deleteBtn">Delete</button>
+      </div>
+      <input id="searchNotes" class="search" placeholder="Search notes..." />
+      <div id="notesList" class="notes-list"></div>
+      <div class="muted" style="font-size: 13px; text-align: center">
+        Local storage enabled
+      </div>
+    </aside>
+
+    <main class="editor">
+      <input id="noteTitle" class="note-title" placeholder="Note title" />
+      <textarea
+        id="noteInput"
+        placeholder="Type your note... autocomplete uses LCS + Binary Search"
+      ></textarea>
+      <div class="status">
+        <div id="wordCount">0 words</div>
+        <div id="charCount">0 chars</div>
+      </div>
+    </main>
+
+    <ul id="suggestions" class="suggestions"></ul>
+
+    <script src="script.js">
+      
+    </script>
+  </body>
+</html>
